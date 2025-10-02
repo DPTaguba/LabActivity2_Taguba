@@ -1,0 +1,94 @@
+from abc import ABC, abstractmethod
+
+
+class Game(ABC):
+
+    def remove_common_letters(self):
+        pass
+
+    def calculate_flames(self):
+        pass
+
+
+class FlamesGame(Game):
+    __flames_result = {
+        'F': 'Friendship',
+        'L': 'Love',
+        'A': 'Affection',
+        'M': 'Marriage',
+        'E': 'Enemy',
+        'S': 'Sibling'
+    }
+
+    def __init__(self, name1, name2):
+
+        self.__original_name1 = name1
+        self.__original_name2 = name2
+        self.__name1 = name1.lower().replace(" ", "")
+        self.__name2 = name2.lower().replace(" ", "")
+        self.__flames_keyword = ['F', 'L', 'A', 'M', 'E', 'S']
+        self.__count = 0
+        self.__name1_remaining = ""
+        self.__name2_remaining = ""
+
+    def __remove_common_letters(self):
+        list1 = list(self.__name1)
+        list2 = list(self.__name2)
+
+        temp1 = list1.copy()
+        for letter in temp1:
+            if letter in list2:
+                list1.remove(letter)
+                list2.remove(letter)
+
+        self.__name1_remaining = ''.join(list1)
+        self.__name2_remaining = ''.join(list2)
+        self.__count = len(list1) + len(list2)
+
+    def remove_common_letters(self):
+        self.__remove_common_letters()
+
+    def calculate_flames(self, return_details=False):
+        self.remove_common_letters()
+        flames = self.__flames_keyword.copy()
+        index = 0
+
+        while len(flames) > 1:
+            index = (index + self.__count - 1) % len(flames)
+            flames.pop(index)
+
+        result = self.__flames_result[flames[0]]
+
+        if return_details:
+            return result, {
+                "name1_remaining": self.__name1_remaining,
+                "name2_remaining": self.__name2_remaining,
+                "count1": len(self.__name1_remaining),
+                "count2": len(self.__name2_remaining),
+                "total": self.__count
+            }
+
+        return result
+
+
+def main():
+    print("Welcome to the Mating Game (FLAMES)")
+
+    name1 = input("Your name       : ")
+    name2 = input("Crush name      : ")
+
+    game = FlamesGame(name1, name2)
+    result, details = game.calculate_flames(return_details=True)
+
+    print()
+    print(f"Your name remaining      : {details['name1_remaining']}")
+    print(f"Crush name remaining     : {details['name2_remaining']}")
+    print(f"Count remaining [your name]  : {details['count1']}")
+    print(f"Count remaining [crush]      : {details['count2']}")
+    print(f"Sum                     : {details['total']}")
+    print()
+    print(f"Relationship            : {result}")
+
+
+if __name__ == "__main__":
+    main()
