@@ -1,0 +1,75 @@
+import random
+
+
+def draw_winning_numbers():
+    return set(random.sample(range(1, 61), 6))
+
+
+def check_matches(player_card, winning_numbers):
+    return player_card.intersection(winning_numbers)
+
+
+def calculate_prize(matches_count):
+    return 1_000_000 if matches_count == 6 else matches_count * 1000
+
+
+def get_player_input():
+    players = {}
+    try:
+        num_players = int(input("Enter number of players: "))
+    except ValueError:
+        print("Invalid input. Please enter an integer.")
+        return get_player_input()
+
+    for i in range(num_players):
+        name = input(f"\nEnter name of player #{i + 1}: ").strip()
+
+        while True:
+            try:
+                numbers = input(f"Enter 6 unique numbers between 1 and 60 for {name} (comma-separated): ")
+                number_list = [int(n.strip()) for n in numbers.split(',')]
+
+                if len(number_list) != 6:
+                    raise ValueError("You must enter exactly 6 numbers.")
+                if any(n < 1 or n > 60 for n in number_list):
+                    raise ValueError("All numbers must be between 1 and 60.")
+                if len(set(number_list)) != 6:
+                    raise ValueError("Numbers must be unique.")
+
+                players[name] = set(number_list)
+                break
+            except ValueError as e:
+                print(f"Error: {e} Please try again.")
+
+    return players
+
+
+def main():
+    print(" Welcome to the 6/60 Lottery Game ")
+
+
+    players = get_player_input()
+
+
+    winning_numbers = draw_winning_numbers()
+    print(f"\n Winning Numbers: {sorted(winning_numbers)}\n")
+
+
+    for name, card in players.items():
+        matched = check_matches(card, winning_numbers)
+        match_count = len(matched)
+        prize = calculate_prize(match_count)
+
+        if match_count == 0:
+            print(f"{name}'s card: {sorted(card)}. No match!")
+        elif match_count == 6:
+            print(
+                f"{name}'s card: {sorted(card)} has all 6 matched numbers '{sorted(matched)}'.  JACKPOT! You won 1 million pesos!")
+        else:
+            plural = "numbers" if match_count > 1 else "number"
+            print(
+                f"{name}'s card: {sorted(card)} has {match_count} matched {plural} '{sorted(matched)}'. You won {prize} pesos!")
+
+
+if __name__ == "__main__":
+    main()
