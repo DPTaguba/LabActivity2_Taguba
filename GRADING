@@ -1,0 +1,45 @@
+def calculate_point_grade(avg):
+    if avg < 0:
+        return 0.00, "No such grade"
+    elif avg < 50:
+        return 9.00, "Dropped"
+    elif avg < 75:
+        return 5.00, "Failed"
+    elif avg < 80:
+        return ((100 - avg) + 10) / 10, "Passed – Satisfactory"
+    elif avg < 85:
+        return ((100 - avg) + 10) / 10, "Passed – Good"
+    elif avg < 90:
+        return ((100 - avg) + 10) / 10, "Passed – Average"
+    elif avg < 100:
+        return ((100 - avg) + 10) / 10, "Passed – Very Good"
+    elif avg == 100:
+        return ((100 - avg) + 10) / 10, "Passed – Excellent"
+    else:
+        return None, "Out of range or Invalid"
+
+def main():
+    grades = []
+    while True:
+        try:
+            grade = float(input("Input Grade : "))
+            if grade == -1:
+                break
+            elif 0 <= grade <= 100:
+                grades.append(grade)
+            else:
+                print("Invalid grade. Please enter a value between 0 and 100 or -1 to stop.")
+        except ValueError:
+            print("Invalid input. Please enter a numeric value.")
+
+    if grades:
+        average = sum(grades) / len(grades)
+        point_grade, remarks = calculate_point_grade(average)
+        print(f"\nAverage     : {average:.1f}")
+        print(f"Point Grade : {point_grade:.1f}")
+        print(f"Remarks     : {remarks}")
+    else:
+        print("No grades entered.")
+
+if __name__ == "__main__":
+    main()
